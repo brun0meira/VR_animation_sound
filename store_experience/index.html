@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.misc.min.js"></script>
+    <script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.2/dist/aframe-extras.min.js"></script>
+    <title>A-Frame Interações</title>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <img id="fundo" src="./assets/textures/pexels-francesco-ungaro-281260.jpg" />
+        <a-asset-item id="personagem" src="./assets/models/Suit.glb"></a-asset-item>
+        <a-asset-item id="living-room" src="./assets/models/cozy_living_room_baked.glb"></a-asset-item>
+        <a-asset-item id="mirror" src="./assets/models/Mirror.glb"></a-asset-item>
+        <a-asset-item id="clothes" src="./assets/models/a_set_of_victorian_clothes.glb"></a-asset-item>
+      </a-assets>
+
+      <audio id="background-music" src="./assets/sounds/Lofi music - Reflective Waters [ ezmp3.cc ].mp3" autoplay loop></audio>
+
+      <!-- Configuração do cenário -->
+      <a-camera position="0 17 0" id="cameraCena">
+        <a-cursor intersection-spawn="Event: click; mixin:voxel;"></a-cursor>
+      </a-camera>
+
+      <a-sky src="#fundo"></a-sky>
+
+      <a-entity
+        gltf-model="#personagem"
+        scale="10 10 10"
+        position="-5 1 30"
+        rotation="0 150 0"
+      ></a-entity>
+
+      <a-entity
+        gltf-model="#clothes"
+        scale="10 10 10"
+        position="-5 1 15"
+        rotation="0 130 0"
+        visible="false"
+      ></a-entity>
+
+      <a-entity
+        gltf-model="#mirror"
+        scale="0.25 0.25 0.25"
+        position="-1 1 35"
+        rotation="0 150 0"
+      ></a-entity>
+
+      <a-entity
+        gltf-model="#living-room"
+        scale="10 10 10"
+        position="0 0.5 0"
+        rotation="0 45 0"
+      ></a-entity>
+    </a-scene>
+
+    <script>
+      // Referências aos elementos
+      const personagem = document.querySelector('[gltf-model="#personagem"]');
+      const clothes = document.querySelector('[gltf-model="#clothes"]');
+      const audio = new Audio("./assets/sounds/intro_barb.mp3");
+
+      let isAnimatingClothes = false;
+
+      document.addEventListener("keydown", (event) => {
+        switch (event.key) {
+          case "p":
+            audio.play();
+            personagem.setAttribute("animation-mixer", {
+              clip: "CharacterArmature|Wave", 
+              loop: "once",
+              timeScale: 1,
+            });
+
+            
+            setTimeout(() => {
+              personagem.removeAttribute("animation-mixer");
+            }, 5000);
+            break;
+
+          case "r":
+            const isVisible = clothes.getAttribute("visible");
+            clothes.setAttribute("visible", !isVisible);
+            break;
+
+          case "t":
+            if (isAnimatingClothes) {
+              clothes.removeAttribute("animation");
+            } else {
+              clothes.setAttribute("animation", {
+                property: "rotation",
+                to: "0 490 0",
+                loop: true,
+                dur: 5000,
+                easing: "linear",
+              });
+            }
+            isAnimatingClothes = !isAnimatingClothes;
+            break;
+
+          default:
+            console.log(`Tecla ${event.key} sem ação configurada.`);
+        }
+      });
+    </script>
+  </body>
+</html>
